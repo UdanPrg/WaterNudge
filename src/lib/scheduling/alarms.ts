@@ -65,14 +65,28 @@ function buildDoseNotification(dose: DoseSlot, numberOfDoses: number, goalMl: nu
   };
 }
 
-export async function ensureAlarmChannel(): Promise<void> {
+let lastChannelSoundUri: string | null | undefined;
+
+/**
+ * Android notification channels can't change their sound once created — the
+ * OS silently ignores it. So whenever the chosen sound differs from the one
+ * the channel currently has, delete and recreate it (same id, safe for any
+ * already-scheduled trigger notifications, which look up the channel by id
+ * only when they actually fire).
+ */
+export async function ensureAlarmChannel(soundUri?: string | null): Promise<void> {
+  if (lastChannelSoundUri !== undefined && lastChannelSoundUri === soundUri) return;
+
+  await notifee.deleteChannel(ALARM_CHANNEL_ID);
   await notifee.createChannel({
     id: ALARM_CHANNEL_ID,
     name: "Alarmas de hidratación",
     importance: AndroidImportance.HIGH,
     vibration: true,
     vibrationPattern: [400, 250, 400, 250],
+    sound: soundUri ?? "default",
   });
+  lastChannelSoundUri = soundUri ?? null;
 }
 
 export interface PermissionStatus {
@@ -113,8 +127,12 @@ export async function cancelAllAlarms(): Promise<void> {
 }
 
 /** Schedules OS alarms for every dose after the wake-up dose (which is shown in-app instantly). */
-export async function scheduleDailyAlarms(schedule: ScheduleResult, goalMl: number): Promise<string[]> {
-  await ensureAlarmChannel();
+export async function scheduleDailyAlarms(
+  schedule: ScheduleResult,
+  goalMl: number,
+  soundUri?: string | null
+): Promise<string[]> {
+  await ensureAlarmChannel(soundUri);
   const ids: string[] = [];
 
   for (const dose of schedule.scheduledDoses) {

@@ -8,6 +8,8 @@ export interface Settings {
   sound: boolean;
   vibration: boolean;
   fallbackWakeHour: number; // hour (0-23) auto-applied if "Me levanté" is never tapped
+  /** Content URI of the chosen alarm ringtone; null = system default alarm sound. */
+  alarmSoundUri: string | null;
 }
 
 export interface Entry {

@@ -17,6 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sound: true,
   vibration: true,
   fallbackWakeHour: 7,
+  alarmSoundUri: null,
 };
 
 export const HISTORY_MAX_DAYS = 7;

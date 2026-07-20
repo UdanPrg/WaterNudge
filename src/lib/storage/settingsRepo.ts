@@ -3,8 +3,8 @@ import { getItem, setItem } from "@/lib/storage/storage";
 import type { Settings } from "@/types";
 
 export async function getSettings(): Promise<Settings> {
-  const stored = await getItem<Settings>(STORAGE_KEYS.settings);
-  return stored ?? DEFAULT_SETTINGS;
+  const stored = await getItem<Partial<Settings>>(STORAGE_KEYS.settings);
+  return { ...DEFAULT_SETTINGS, ...stored };
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {

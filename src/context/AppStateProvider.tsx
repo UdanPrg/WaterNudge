@@ -124,7 +124,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     if (today.wakeStartTime && !today.goalReachedAt && !nextDose) {
       const schedule = buildDailySchedule(today.wakeStartTime, settings, Date.now());
       if (schedule.scheduledDoses.length > 0) {
-        const ids = await scheduleDailyAlarms(schedule, today.goalMl);
+        const ids = await scheduleDailyAlarms(schedule, today.goalMl, settings.alarmSoundUri);
         await setScheduledNotificationIds(ids);
         nextDose = await refreshNextDose(today.goalReachedAt);
       }
@@ -165,7 +165,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       const today = await setWakeStartTime(time, autoApplied);
       const settings = await getSettings();
       const schedule = buildDailySchedule(time, settings, Date.now());
-      const ids = await scheduleDailyAlarms(schedule, today.goalMl);
+      const ids = await scheduleDailyAlarms(schedule, today.goalMl, settings.alarmSoundUri);
       const finalToday = await setScheduledNotificationIds(ids);
       dispatch({ type: "SET_TODAY", payload: finalToday });
       dispatch({ type: "SET_NEXT_DOSE", payload: await refreshNextDose(finalToday.goalReachedAt) });
@@ -190,7 +190,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     if (wasGoalReached && !updated.goalReachedAt && updated.wakeStartTime) {
       const settings = await getSettings();
       const schedule = buildDailySchedule(updated.wakeStartTime, settings, Date.now());
-      const ids = await scheduleDailyAlarms(schedule, updated.goalMl);
+      const ids = await scheduleDailyAlarms(schedule, updated.goalMl, settings.alarmSoundUri);
       const finalToday = await setScheduledNotificationIds(ids);
       dispatch({ type: "SET_TODAY", payload: finalToday });
       dispatch({ type: "SET_NEXT_DOSE", payload: await refreshNextDose(finalToday.goalReachedAt) });

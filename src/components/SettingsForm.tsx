@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 
+import { AlarmSoundPicker } from "@/components/AlarmSoundPicker";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { NumberField } from "@/components/ui/NumberField";
@@ -116,6 +117,10 @@ export function SettingsForm({
           label="Vibración"
           value={settings.vibration}
           onChange={(vibration) => onUpdate({ vibration })}
+        />
+        <AlarmSoundPicker
+          soundUri={settings.alarmSoundUri}
+          onChange={(alarmSoundUri) => onUpdate({ alarmSoundUri })}
         />
       </Card>
 
